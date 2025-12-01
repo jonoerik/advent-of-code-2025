@@ -4,7 +4,7 @@ Solutions by jonoerik \
 
 | Day | Solved |
 | --- | --- |
-| 1 | ✔❌ |
+| 1 | ✔✔ |
 | 2 | ❌❌ |
 | 3 | ❌❌ |
 | 4 | ❌❌ |

@@ -31,4 +31,19 @@ def part1(input_data: InputType) -> ResultType:
 
 
 def part2(input_data: InputType) -> ResultType:
-    pass  # TODO
+    dial = 50
+    result = 0
+    for dir, dist in input_data:
+        result += dist // 100
+        dist %= 100
+
+        if dist > 0:
+            if (dial != 0 and (
+                    (dir == Direction.L and dist >= dial) or
+                    (dir == Direction.R and dist >= (100 - dial)))):
+                result += 1
+
+            dial += dist * {Direction.L: -1, Direction.R: 1}[dir]
+            dial %= 100
+
+    return result
