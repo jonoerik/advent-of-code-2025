@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import functools
 from pathlib import Path
 
 InputType = tuple[list[tuple[int, int]], list[int]]
@@ -21,4 +22,17 @@ def part1(input_data: InputType) -> ResultType:
 
 
 def part2(input_data: InputType) -> ResultType:
-    pass  # TODO
+    def ranges_intersect(a: tuple[int, int], b: tuple[int, int]) -> bool:
+        return (a[0] <= b[0] <= a[1]) or (a[0] <= b[1] <= a[1]) or (b[0] <= a[0] and b[1] >= a[1])
+
+    def merge_ranges(a: tuple[int, int], b: tuple[int, int]) -> tuple[int, int]:
+        assert ranges_intersect(a, b)
+        return min(a[0], b[0]), max(a[1], b[1])
+
+    ranges = []
+    for new_range in input_data[0]:
+        to_merge = [r for r in ranges if ranges_intersect(r, new_range)]
+        ranges = [r for r in ranges if r not in to_merge]
+        ranges.append(functools.reduce(merge_ranges, to_merge, new_range))
+
+    return sum([b - a + 1 for a, b in ranges])
