@@ -8,21 +8,22 @@ class Op(Enum):
     ADD = 0
     MULTIPLY = 1
 
-InputType = tuple[list[list[int]], list[Op]]
+InputType = list[str]
 ResultType = int
 
 
 def load(input_path: Path) -> InputType:
     with open(input_path) as f:
-        lines: list[list[str]] = [line.strip().split() for line in f.readlines()]
-        return ([[int(s) for s in line] for line in lines[:-1]],
-                [{"+": Op.ADD, "*": Op.MULTIPLY}[s] for s in lines[-1]])
+        return f.readlines()
+
 
 
 def part1(input_data: InputType) -> ResultType:
+    numbers = [[int(s) for s in line.strip().split()] for line in input_data[:-1]]
+    ops = [{"+": Op.ADD, "*": Op.MULTIPLY}[s] for s in input_data[-1].strip().split()]
     return sum([
-        ({Op.ADD: sum, Op.MULTIPLY: math.prod}[op])([line[i] for line in input_data[0]])
-        for i, op in enumerate(input_data[1])
+        ({Op.ADD: sum, Op.MULTIPLY: math.prod}[op])([line[i] for line in numbers])
+        for i, op in enumerate(ops)
         ])
 
 
