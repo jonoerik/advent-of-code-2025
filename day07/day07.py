@@ -34,4 +34,12 @@ def part1(input_data: InputType) -> ResultType:
 
 
 def part2(input_data: InputType) -> ResultType:
-    pass  # TODO
+    beams = [1 if input_data[0][i] == Tile.START else 0 for i in range(len(input_data[0]))]
+
+    for row in input_data[1:]:
+        beams = [(beams[i] if tile == Tile.EMPTY else 0) +
+                 (beams[i-1] if i > 0 and row[i-1] == Tile.SPLITTER else 0) +
+                 (beams[i+1] if i < len(row) - 1 and row[i+1] == Tile.SPLITTER else 0)
+                 for i, tile in enumerate(row)]
+
+    return sum(beams)
