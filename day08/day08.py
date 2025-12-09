@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import functools
 import itertools
 import math
 from pathlib import Path
@@ -16,12 +17,14 @@ def load(input_path: Path) -> InputType:
     return result
 
 
+@functools.cache
+def distance_squared(a: CoordType, b: CoordType) -> int:
+    """As we're only comparing distances, and we don't need the actual distance, we don't need to do the final sqrt."""
+    return sum((xa - xb) ** 2 for xa, xb in zip(a, b, strict=True))
+
+
 def part1(input_data: InputType, num_connections: int = 1000) -> ResultType:
     circuits: set[frozenset[CoordType]] = {frozenset({coord}) for coord in input_data}
-
-    # As we're only comparing distances, we don't need to do the final sqrt.
-    def distance_squared(a: tuple[int, int, int], b: tuple[int, int, int]) -> int:
-        return sum((xa - xb) ** 2 for xa, xb in zip(a, b, strict=True))
 
     for a, b in itertools.islice(sorted(itertools.combinations(input_data, 2), key=lambda t: distance_squared(t[0], t[1])), num_connections):
         # Merge circuits containing a and b, if not already part of the same circuit.
@@ -34,4 +37,16 @@ def part1(input_data: InputType, num_connections: int = 1000) -> ResultType:
 
 
 def part2(input_data: InputType) -> ResultType:
-    pass  # TODO
+    circuits: set[frozenset[CoordType]] = {frozenset({coord}) for coord in input_data}
+
+    @functools.cache
+    def min_distance_squared(circuit_a: frozenset[CoordType], circuit_b: frozenset[CoordType]) -> int:
+        """Find the square of the distance between the closest junction boxes in two circuits."""
+        return min(distance_squared(a, b) for a, b in itertools.product(circuit_a, circuit_b))
+
+    while len(circuits) > 2:
+        circuit_a, circuit_b = min(((circuit_a, circuit_b) for circuit_a, circuit_b in itertools.combinations(circuits, 2)), key=lambda t: min_distance_squared(*t))
+        circuits = (circuits - {circuit_a, circuit_b}) | {(circuit_a | circuit_b)}
+
+    final_a, final_b = min(((a, b) for a, b in itertools.product(*circuits)), key=lambda t: sum((x - y) ** 2 for x, y in zip(*t, strict=True)))
+    return final_a[0] * final_b[0]
