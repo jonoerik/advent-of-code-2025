@@ -1,2 +1,4 @@
 pulp
 pytest
+pylint
+pylint-per-file-ignores

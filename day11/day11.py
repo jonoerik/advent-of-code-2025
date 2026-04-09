@@ -9,7 +9,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         return {k: vs.split() for k, vs in (line.split(": ", 2) for line in f.readlines())}
 
 
@@ -36,7 +36,7 @@ def count_paths(input_data: InputType, sorted_nodes: list[str], source_node: str
     # children to dest.
     paths_to_dest: dict[str, int] = {dest_node: 1}
     for n in reversed(sorted_nodes[sorted_nodes.index(source_node):sorted_nodes.index(dest_node)]):
-        paths_to_dest[n] = sum(paths_to_dest[m] if m in paths_to_dest.keys() else 0 for m in input_data[n])
+        paths_to_dest[n] = sum(paths_to_dest[m] if m in paths_to_dest else 0 for m in input_data[n])
 
     return paths_to_dest[source_node]
 

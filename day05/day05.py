@@ -8,7 +8,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         ranges = []
         while line := f.readline().strip():
             ranges.append(tuple(int(x) for x in line.split("-", 2)))
@@ -35,4 +35,4 @@ def part2(input_data: InputType) -> ResultType:
         ranges = [r for r in ranges if r not in to_merge]
         ranges.append(functools.reduce(merge_ranges, to_merge, new_range))
 
-    return sum([b - a + 1 for a, b in ranges])
+    return sum(b - a + 1 for a, b in ranges)

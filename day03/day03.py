@@ -7,7 +7,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         return [[int(x) for x in line.strip()] for line in f.readlines()]
 
 
@@ -34,14 +34,14 @@ def find_max_joltage(bank: list[int], battery_count: int) -> int:
 
 
 def part1(input_data: InputType) -> ResultType:
-    return sum([
+    return sum(
         find_max_joltage(bank, 2)
         for bank in input_data
-    ])
+    )
 
 
 def part2(input_data: InputType) -> ResultType:
-    return sum([
+    return sum(
         find_max_joltage(bank, 12)
         for bank in input_data
-    ])
+    )

@@ -11,9 +11,9 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
-        result = [tuple([int(part) for part in line.strip().split(",")]) for line in f.readlines()]
-    assert all([len(coord) == 3 for coord in result])
+    with open(input_path, encoding="utf-8") as f:
+        result = [tuple(int(part) for part in line.strip().split(",")) for line in f.readlines()]
+    assert all(len(coord) == 3 for coord in result)
     return result
 
 
@@ -26,7 +26,9 @@ def distance_squared(a: CoordType, b: CoordType) -> int:
 def part1(input_data: InputType, num_connections: int = 1000) -> ResultType:
     circuits: set[frozenset[CoordType]] = {frozenset({coord}) for coord in input_data}
 
-    for a, b in itertools.islice(sorted(itertools.combinations(input_data, 2), key=lambda t: distance_squared(t[0], t[1])), num_connections):
+    for a, b in itertools.islice(sorted(itertools.combinations(input_data, 2),
+                                        key=lambda t: distance_squared(t[0], t[1])),
+                                    num_connections):
         # Merge circuits containing a and b, if not already part of the same circuit.
         circuit_a = {c for c in circuits if a in c}.pop()
         circuit_b = {c for c in circuits if b in c}.pop()
@@ -45,8 +47,12 @@ def part2(input_data: InputType) -> ResultType:
         return min(distance_squared(a, b) for a, b in itertools.product(circuit_a, circuit_b))
 
     while len(circuits) > 2:
-        circuit_a, circuit_b = min(((circuit_a, circuit_b) for circuit_a, circuit_b in itertools.combinations(circuits, 2)), key=lambda t: min_distance_squared(*t))
+        circuit_a, circuit_b = min(((circuit_a, circuit_b)
+                                    for circuit_a, circuit_b
+                                    in itertools.combinations(circuits, 2)),
+                                   key=lambda t: min_distance_squared(*t))
         circuits = (circuits - {circuit_a, circuit_b}) | {(circuit_a | circuit_b)}
 
-    final_a, final_b = min(((a, b) for a, b in itertools.product(*circuits)), key=lambda t: sum((x - y) ** 2 for x, y in zip(*t, strict=True)))
+    final_a, final_b = min(((a, b) for a, b in itertools.product(*circuits)),
+                           key=lambda t: sum((x - y) ** 2 for x, y in zip(*t, strict=True)))
     return final_a[0] * final_b[0]

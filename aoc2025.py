@@ -19,8 +19,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-1", "--part1", action="store_true")
     parser.add_argument("-2", "--part2", action="store_true")
-    parser.add_argument("day", type=int, help="A number from 1-25 indicating the day of the puzzle to run")
-    parser.add_argument("input", type=Path, help="Path to the file containing puzzle input (defaults to the main input file for that day's puzzle)", nargs="?")
+    parser.add_argument("day", type=int,
+                        help="A number from 1-25 indicating the day of the puzzle to run")
+    parser.add_argument("input", type=Path,
+                        help="Path to the file containing puzzle input " +
+                        "(defaults to the main input file for that day's puzzle)",
+                        nargs="?")
     parser.add_argument("-e", "--extra-arg", type=str,
                         help="An extra argument for the puzzle, in the form arg_name=value",
                         action="append", default=[])
@@ -31,7 +35,9 @@ if __name__ == "__main__":
     for ea in args.extra_arg:
         if "=" not in ea:
             sys.exit(f"Extra argument '{ea}' isn't of the form arg_name=value.")
-    extra_args = {k: int(v) if v.isdigit() else v for k, v in [i.split("=", 1) for i in args.extra_arg]}
+    extra_args = {k: int(v) if v.isdigit() else v
+                  for k, v in [i.split("=", 1)
+                               for i in args.extra_arg]}
     if not args.input:
         args.input = Path(__file__).resolve().parent / f"day{args.day:02}" / "data" / "input"
 

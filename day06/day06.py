@@ -9,7 +9,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         # Just remove trailling newline.
         return [line.removesuffix("\n") for line in f.readlines()]
 
@@ -22,10 +22,10 @@ class Op(Enum):
 def part1(input_data: InputType) -> ResultType:
     numbers = [[int(s) for s in line.strip().split()] for line in input_data[:-1]]
     ops = [{"+": Op.ADD, "*": Op.MULTIPLY}[s] for s in input_data[-1].strip().split()]
-    return sum([
+    return sum(
         ({Op.ADD: sum, Op.MULTIPLY: math.prod}[op])([line[i] for line in numbers])
         for i, op in enumerate(ops)
-        ])
+        )
 
 
 def part2(input_data: InputType) -> ResultType:

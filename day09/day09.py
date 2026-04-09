@@ -11,7 +11,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         result = [tuple(int(x) for x in line.strip().split(",")) for line in f.readlines()]
     assert all(len(coord) == 2 for coord in result)
     return result
@@ -52,9 +52,9 @@ def part2(input_data: InputType) -> ResultType:
             return f"({self.xs.start},{self.ys.start}) - ({self.xs.stop - 1},{self.ys.stop - 1})"
 
     class BSPNodeState(Enum):
-            ALL_FALSE = 0
-            ALL_TRUE = 1
-            SPLIT = 2
+        ALL_FALSE = 0
+        ALL_TRUE = 1
+        SPLIT = 2
     bsp_node_state_to_bool = {
         BSPNodeState.ALL_FALSE: False,
         BSPNodeState.ALL_TRUE: True,
@@ -64,7 +64,8 @@ def part2(input_data: InputType) -> ResultType:
         def __init__(self, bounds: Rect, value: bool):
             self.children: list[BSPNode] = []
             self.state: BSPNodeState = BSPNodeState.ALL_TRUE if value else BSPNodeState.ALL_FALSE
-            # X and Y bounds for this node. As with ranges, this includes the start coordinates but excludes the end coordinates.
+            # X and Y bounds for this node. As with ranges, this includes the start coordinates
+            # but excludes the end coordinates.
             self.bounds: Rect = bounds
 
         def set_rect(self, r: Rect, value: bool) -> None:
@@ -122,7 +123,8 @@ def part2(input_data: InputType) -> ResultType:
                 case BSPNodeState.ALL_TRUE:
                     return True
                 case BSPNodeState.SPLIT:
-                    results = [child.point_state(p) for child in self.children if p[0] in child.bounds.xs and p[1] in child.bounds.ys]
+                    results = [child.point_state(p) for child in self.children
+                               if p[0] in child.bounds.xs and p[1] in child.bounds.ys]
                     # Child regions should be non-overlapping.
                     assert len(results) == 1
                     return results[0]

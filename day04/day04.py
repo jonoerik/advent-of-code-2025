@@ -9,7 +9,7 @@ ResultType = int
 
 
 def load(input_path: Path) -> InputType:
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         return [[{"@": True, ".": False}[c] for c in line.strip()] for line in f.readlines()]
 
 

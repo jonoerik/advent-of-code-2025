@@ -1,0 +1,27 @@
+[tool.pylint.main]
+ignore = [".git", "venv"]
+
+load-plugins = [
+    "pylint_per_file_ignores",
+]
+
+[tool.pylint."messages control"]
+disable = [
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "no-else-return",
+    "too-many-statements"
+]
+per-file-ignores = [
+    # day_template.py file not intended to be run.
+    "day_template.py:fixme,undefined-variable,unused-argument"
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.design]
+# Allow classes with only one public function.
+# For classes with none, use `@dataclasses.dataclass`.
+min-public-methods = 1

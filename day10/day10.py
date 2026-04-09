@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 
+from dataclasses import dataclass
 import itertools
 from pathlib import Path
-import pulp
 import re
 
+import pulp
 
+
+@dataclass
 class Machine:
-    LightsType = tuple[bool, ...]
-    ButtonsType = tuple[tuple[int, ...], ...]
-    JoltagesType = tuple[int, ...]
-
-    def __init__(self, lights: LightsType, buttons: ButtonsType, joltages: JoltagesType):
-        self.lights = lights
-        self.buttons = buttons
-        self.joltages = joltages
+    lights: tuple[bool, ...]
+    buttons: tuple[tuple[int, ...], ...]
+    joltages: tuple[int, ...]
 
     def __str__(self) -> str:
         return (f"[{"".join({False: ".", True: "#"}[x] for x in self.lights)}] "
@@ -36,11 +34,12 @@ def load(input_path: Path) -> InputType:
         match = line_regex.fullmatch(line)
         assert match
         lights = tuple({".": False, "#": True}[c] for c in match.group("lights"))
-        buttons = tuple([int(x) for x in button.lstrip("(").rstrip(")").split(",")] for button in match.group("buttons").split())
+        buttons = tuple([int(x) for x in button.lstrip("(").rstrip(")").split(",")]
+                        for button in match.group("buttons").split())
         joltages = tuple(int(x) for x in match.group("joltages").split(","))
         return Machine(lights, buttons, joltages)
 
-    with open(input_path) as f:
+    with open(input_path, encoding="utf-8") as f:
         return [parse_machine(line.strip()) for line in f.readlines()]
 
 
@@ -51,7 +50,9 @@ def part1(input_data: InputType) -> ResultType:
         # In the input data file, machines have at most 13 buttons, giving 2**13 possibilities to check,
         # which is small enough to search by brute force.
 
-        for button_presses in sorted(itertools.product((False, True), repeat=len(machine.buttons)), key=lambda x: x.count(True)):
+        for button_presses in sorted(itertools.product((False, True),
+                                                       repeat=len(machine.buttons)),
+                                                       key=lambda x: x.count(True)):
             lights = (False,) * len(machine.lights)
 
             for button in (machine.buttons[i] for i, b in enumerate(button_presses) if b):
@@ -59,6 +60,8 @@ def part1(input_data: InputType) -> ResultType:
 
             if lights == machine.lights:
                 return button_presses.count(True)
+
+        assert False
 
     return sum(min_button_presses(m) for m in input_data)
 
